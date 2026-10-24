@@ -101,7 +101,16 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs}": [
+      "eslint"
+    ],
+    "*.{js,mjs,cjs,html,css,json,md}": [
+      "prettier --check"
+    ]
   },
   "repository": {
     "type": "git",
