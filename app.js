@@ -35,9 +35,9 @@ const createNewTaskElement = function (taskText) {
 };
 
 const addTask = function () {
-  // Create a task from the input value.
-  if (!newTaskInput.value.trim()) return;
-  const taskItem = createNewTaskElement(newTaskInput.value);
+  const taskText = newTaskInput.value.trim();
+  if (taskText === '') return;
+  const taskItem = createNewTaskElement(taskText);
 
   incompleteTaskList.appendChild(taskItem);
   bindTaskEvents(taskItem, moveTaskToCompleted);
@@ -48,15 +48,19 @@ const addTask = function () {
 const editTask = function () {
   const taskItem = this.parentNode;
   const editTaskInput = taskItem.querySelector('input[type=text]');
-  const label = taskItem.querySelector('label');
+  const taskLabel = taskItem.querySelector('label');
   const editButton = taskItem.querySelector('.edit');
   const isEditMode = taskItem.classList.contains('editMode');
   // Save changes when leaving edit mode.
   if (isEditMode) {
-    label.innerText = editTaskInput.value;
+    const taskText = editTaskInput.value.trim();
+
+    if (taskText !== '') {
+      taskLabel.innerText = taskText;
+    }
     editButton.innerText = 'Edit';
   } else {
-    editTaskInput.value = label.innerText;
+    editTaskInput.value = taskLabel.innerText;
     editButton.innerText = 'Save';
   }
 
@@ -70,28 +74,31 @@ const deleteTask = function () {
   taskList.removeChild(taskItem);
 };
 
-const moveTask = function (destinationList, checkboxChangeHandler) {
-  const taskItem = this.parentNode;
+const moveTask = function (taskItem, destinationList, checkboxChangeHandler) {
   destinationList.appendChild(taskItem);
   bindTaskEvents(taskItem, checkboxChangeHandler);
 };
 
 const moveTaskToCompleted = function () {
+  const taskItem = this.parentNode;
+
   // Move the task to the completed list.
-  moveTask.call(this, completedTasksList, moveTaskToIncomplete);
+  moveTask(taskItem, completedTasksList, moveTaskToIncomplete);
 };
 
 const moveTaskToIncomplete = function () {
+  const taskItem = this.parentNode;
+
   // Move the task back when it is unchecked.
-  moveTask.call(this, incompleteTaskList, moveTaskToCompleted);
+  moveTask(taskItem, incompleteTaskList, moveTaskToCompleted);
 };
 
 addTaskButton.addEventListener('click', addTask);
 
-const bindTaskEvents = function (taskListItem, checkboxChangeHandler) {
-  const taskCheckbox = taskListItem.querySelector('input[type=checkbox]');
-  const editButton = taskListItem.querySelector('button.edit');
-  const deleteButton = taskListItem.querySelector('button.delete');
+const bindTaskEvents = function (taskItem, checkboxChangeHandler) {
+  const taskCheckbox = taskItem.querySelector('input[type=checkbox]');
+  const editButton = taskItem.querySelector('button.edit');
+  const deleteButton = taskItem.querySelector('button.delete');
 
   editButton.onclick = editTask;
   deleteButton.onclick = deleteTask;
